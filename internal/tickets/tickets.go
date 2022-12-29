@@ -1,7 +1,9 @@
 package tickets
 
 import (
+	"encoding/csv"
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
 )
@@ -22,9 +24,15 @@ type Ticket struct {
 }
 
 // ejemplo 1
-func GetTotalTickets(destination string, data [][]string) (response int, err error) {
+func GetTotalTickets(destination string) (response int, err error) {
 	if destination == "" {
 		err = ErrEmptyDestination
+	}
+
+	data, err1 := getClientsInformation()
+	if err1 != nil {
+		err = err1
+		return
 	}
 
 	for _, client := range data {
@@ -36,7 +44,13 @@ func GetTotalTickets(destination string, data [][]string) (response int, err err
 }
 
 // ejemplo 2
-func GetCountByPeriod(data [][]string) (response interface{}, err error) {
+func GetCountByPeriod() (response interface{}, err error) {
+	data, err1 := getClientsInformation()
+	if err1 != nil {
+		err = err1
+		return
+	}
+
 	horarios := &Horarios{}
 	for _, client := range data {
 		clientHorario := strings.Split(client[4], ":")[0]
@@ -68,12 +82,45 @@ func addInformationByHour(horarios *Horarios, hora string) (err error) {
 }
 
 // ejemplo 3
-func AverageDestination(destination string, data [][]string) (response int, err error) {
-	totalTickets, err1 := GetTotalTickets(destination, data)
+func AverageDestination(destination string) (response int, err error) {
+	totalTickets, err1 := GetTotalTickets(destination)
 	if err1 != nil {
 		err = err1
 		return
 	}
+
+	data, err1 := getClientsInformation()
+	if err1 != nil {
+		err = err1
+		return
+	}
+
 	response = totalTickets * 100 / len(data)
 	return
+}
+
+func getClientsInformation() (data [][]string, err error) {
+	file, err := os.Open("../../tickets.csv")
+	if err != nil {
+		err = InternalServerError
+		return
+	}
+
+	defer func() {
+		err := recover()
+		if err != nil {
+			fmt.Printf("Hubo un error durante la ejecución. Error: %s\n", err)
+		}
+		file.Close()
+	}()
+
+	csvReader := csv.NewReader(file)
+	response, err := csvReader.ReadAll()
+	if err != nil {
+		panic(err)
+	}
+
+	data = response
+	return
+
 }
