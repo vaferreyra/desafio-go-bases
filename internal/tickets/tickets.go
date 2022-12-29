@@ -44,7 +44,7 @@ func GetTotalTickets(destination string) (response int, err error) {
 }
 
 // ejemplo 2
-func GetCountByPeriod() (response interface{}, err error) {
+func GetCountByPeriod() (response Horarios, err error) {
 	data, err1 := getClientsInformation()
 	if err1 != nil {
 		err = err1
