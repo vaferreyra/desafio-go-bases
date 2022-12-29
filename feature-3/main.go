@@ -28,22 +28,6 @@ func main() {
 		panic(err)
 	}
 
-	// EJERCICIO 1
-	// number, err := tickets.GetTotalTickets("Argentina", data)
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// fmt.Print(number)
-
-	// EJERCICIO 2
-	// response, err := tickets.GetCountByPeriod(data)
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// fmt.Printf("%+v\n", response)
-
 	// EJERCICIO 3
 	response, err := tickets.AverageDestination("United States", data)
 	if err != nil {
