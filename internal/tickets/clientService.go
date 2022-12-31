@@ -24,7 +24,8 @@ func getClientsInformation() (data [][]string, err error) {
 	csvReader := csv.NewReader(file)
 	response, err := csvReader.ReadAll()
 	if err != nil {
-		panic(err)
+		err = InternalServerError
+		return
 	}
 
 	data = response
